@@ -1,0 +1,11 @@
+{%extends 'base.html'%}
+{%block body%}
+<h1>공모전 만들기</h1>
+<form method='POST'>
+  {% csrf_token %}
+  <table>
+    {{gongmoForm.as_table}}
+  </table>
+  <input type="submit" value="제출">
+</form>
+{%endblock%}

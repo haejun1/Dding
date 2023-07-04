@@ -1,0 +1,13 @@
+{%extends 'base.html'%}
+{%block body%}
+<h1>제목 : {{gongmo.title}}</h1>
+<br>
+
+<a href="/{{gongmo.pk}}/teamCreate/">팀 추가하러 가기</a>
+
+{% for team in gongmo.team_set.all %}
+<li>{{ team.user.username }} : {{ team.name }}</li>
+{% endfor %}
+<br>
+<a href="/">Back</a>
+{%endblock%}

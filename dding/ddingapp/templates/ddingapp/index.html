@@ -1,4 +1,10 @@
 {%extends 'base.html'%}
 {%block body%}
-<h1>음</h1>
+<h1>공모전 모음</h1>
+
+<a href="/gongmoCreate/">공모전 추가하러 가기</a>
+
+{%for gongmo in gongmos %}
+<h2 href><a href="/{{gongmo.pk}}/">{{gongmo.title}}</a></h2>
+{%endfor%}
 {%endblock%}

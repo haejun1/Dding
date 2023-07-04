@@ -1,0 +1,7 @@
+{%extends 'base.html'%}
+{%block body%}
+<h1>제목 : {{team.title}}</h1>
+<p>리더 : {{team.leader.username}}</p>
+<br>
+<a href="/{{team.gongmo.pk}}">{{ team.gongmo.title }}로 돌아가기</a>
+{%endblock%}
