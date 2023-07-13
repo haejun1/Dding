@@ -2,7 +2,6 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import *
 from .forms import *
 from django.contrib import messages
-from django.views.decorators.http import require_POST
 
 
 # Create your views here.
@@ -47,10 +46,14 @@ def gongmoDetail(request, gongmoPk):
     context = {"gongmo": gongmo, "teams":teams}
     return render(request, "ddingapp/gongmoDetail.html", context)
 
-
 def teamDetail(request, gongmoPk, teamPk):
     team = get_object_or_404(Team, pk=teamPk)
-    return render(request, "ddingapp/teamDetail.html", {"team": team})
+    jickgoons = team.jickgoons.all()
+    context = {
+        'team' : team,
+        'jickgoons' : jickgoons,
+    }
+    return render(request, 'ddingapp/teamDetail.html', context)
 
 def gongmoDelete(request, gongmoPk):
     gongmoPost = get_object_or_404(Gongmo, pk=gongmoPk)
@@ -61,3 +64,22 @@ def teamDelete(request, gongmoPk, teamPk):
     teamPost = get_object_or_404(Team, pk=teamPk)
     teamPost.delete()
     return redirect("gongmoDetail", gongmoPk=gongmoPk)
+
+def teamJoin(request, gongmoPk, teamPk):
+    team = get_object_or_404(Team, pk=teamPk)
+    jickgoons = Jickgoon.objects.filter(name__in=['기획', '개발', '디자인'])
+    if request.method == 'POST':
+        form = MemberForm(request.POST)
+        if form.is_valid():
+            member = form.save(commit=False)
+            member.team = team
+            member.save()
+            return redirect('teamDetail', gongmoPk=gongmoPk, teamPk=teamPk)
+    else:
+        form = MemberForm()
+    context = {
+        'form' : form,
+        'team' : team,
+        'jickgoons': jickgoons,
+    }
+    return render(request, 'ddingapp/teamJoin.html', context)

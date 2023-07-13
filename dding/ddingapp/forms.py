@@ -1,5 +1,5 @@
 from django import forms
-from .models import Gongmo, Team
+from .models import *
 
 class GongmoForm(forms.ModelForm):
     class Meta:
@@ -10,3 +10,13 @@ class TeamForm(forms.ModelForm):
     class Meta:
         model = Team
         fields = ["name"]
+
+class JickgoonForm(forms.ModelForm):
+    class Meta:
+        model = Jickgoon
+        fields = ['name']
+
+class MemberForm(forms.ModelForm):
+    class Meta:
+        model = Member
+        fields = ['user', 'team', 'jickgoon']

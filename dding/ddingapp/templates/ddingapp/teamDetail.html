@@ -2,6 +2,9 @@
 {%block body%}
 <h1>제목 : {{team.name}}</h1>
 <br>
+<a href="/{{team.gongmo.pk}}/{{team.pk}}/teamJoin">팀 참가하기</a>
+<br>
+
 <a href="/{{team.gongmo.pk}}/{{team.pk}}/teamDelete" onclick="return confirm('정말 팀을 삭제하시겠습니까?')">삭제하기</a>
 <a href="/{{team.gongmo.pk}}">{{ team.gongmo.title }}로 돌아가기</a>
 {%endblock%}

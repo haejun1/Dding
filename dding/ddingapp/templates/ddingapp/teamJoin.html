@@ -1,0 +1,16 @@
+{%extends 'base.html'%}
+{%block body%}
+<h1>{{ team.name }}</h1>
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <label for="id_jickgoon">직군 선택하기 :</label>
+  <select name="jickgoon" id="id_jickgoon">
+    {% for jickgoon in jickgoons %}
+    <option value="{{ jickgoon.id }}">{{ jickgoon.name }}</option>
+    {% endfor %}
+  </select>
+  <button type="submit">팀 참가하기</button>
+</form>
+<a href="/{{team.gongmo.pk}}/{{team.pk}}">팀으로 이동하기</a>
+{%endblock%}
