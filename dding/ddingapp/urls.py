@@ -4,6 +4,9 @@ from . import views
 urlpatterns = [
     path("", views.index, name="index"),
     path("gongmoCreate/", views.gongmoCreate, name="gongmoCreate"),
-    path("<int:pk>/", views.gongmoDetail, name="gongmoDetail"),
-    path("<int:pk>/teamCreate/", views.teamCreate, name="teamCreate"),
+    path("<int:gongmoPk>/", views.gongmoDetail, name="gongmoDetail"),
+    path("<int:gongmoPk>/gongmoDelete/", views.gongmoDelete, name="gongmoDelete"),
+    path("<int:gongmoPk>/teamCreate/", views.teamCreate, name="teamCreate"),
+    path("<int:gongmoPk>/<int:teamPk>/", views.teamDetail, name="teamDetail"),
+    path("<int:gongmoPk>/<int:teamPk>/teamDelete/", views.teamDelete, name="teamDelete"),
 ]

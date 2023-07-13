@@ -9,5 +9,4 @@ class Gongmo(models.Model):
 
 class Team(models.Model):
     name = models.CharField(max_length=50)
-    leader = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     gongmo = models.ForeignKey(Gongmo, on_delete=models.CASCADE)

@@ -25,24 +25,39 @@ def gongmoCreate(request):
     context = {"gongmoForm" : gongmoForm}
     return render(request, "ddingapp/gongmoCreate.html", context)
 
-def gongmoDetail(request, pk):
-    gongmo = get_object_or_404(Gongmo, pk=pk)
+def teamCreate(request, gongmoPk):
+    gongmo = get_object_or_404(Gongmo, pk=gongmoPk)
+    if request.method == "POST":
+        teamForm = TeamForm(request.POST)
+        if teamForm.is_valid():
+            teamPost = teamForm.save(commit=False)
+            teamPost.gongmo = gongmo
+            teamPost.save()
+            return redirect("gongmoDetail", gongmoPk=gongmo.pk)
+        else:
+            messages.error(request, "폼이 유효하지 않습니다")
+    else:
+        teamForm = TeamForm()
+    context = {"teamForm" : teamForm}
+    return render(request, "ddingapp/teamCreate.html", context)
+
+def gongmoDetail(request, gongmoPk):
+    gongmo = get_object_or_404(Gongmo, pk=gongmoPk)
     teams = Team.objects.filter(gongmo=gongmo)
     context = {"gongmo": gongmo, "teams":teams}
     return render(request, "ddingapp/gongmoDetail.html", context)
 
 
-@require_POST
-def teamCreate(request, pk):
-    if request.user.is_authenticated:
-        gongmo = get_object_or_404(Gongmo, pk=pk)
-        form = TeamForm(request.POST)
-        if form.is_valid():
-            team = form.save(commit=False)
-            team.user = request.user
-            team.gongmo = gongmo
-            team.save()
-        return redirect("gongmoDetail", team.pk)
-    else:
-        messages.warning(request, "팀 생성을 위해서는 로그인이 필요합니다.")
-        return redirect("accounts:login")
+def teamDetail(request, gongmoPk, teamPk):
+    team = get_object_or_404(Team, pk=teamPk)
+    return render(request, "ddingapp/teamDetail.html", {"team": team})
+
+def gongmoDelete(request, gongmoPk):
+    gongmoPost = get_object_or_404(Gongmo, pk=gongmoPk)
+    gongmoPost.delete()
+    return redirect("index")
+
+def teamDelete(request, gongmoPk, teamPk):
+    teamPost = get_object_or_404(Team, pk=teamPk)
+    teamPost.delete()
+    return redirect("gongmoDetail", gongmoPk=gongmoPk)
