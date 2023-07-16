@@ -3,7 +3,6 @@
 <h1>{{ team.name }}</h1>
 <form method="post">
   {% csrf_token %}
-  {{ form.as_p }}
   <label for="id_jickgoon">직군 선택하기 :</label>
   <select name="jickgoon" id="id_jickgoon">
     {% for jickgoon in jickgoons %}

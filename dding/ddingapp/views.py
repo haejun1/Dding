@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import *
 from .forms import *
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 
 
 # Create your views here.
@@ -24,6 +25,7 @@ def gongmoCreate(request):
     context = {"gongmoForm" : gongmoForm}
     return render(request, "ddingapp/gongmoCreate.html", context)
 
+@login_required
 def teamCreate(request, gongmoPk):
     gongmo = get_object_or_404(Gongmo, pk=gongmoPk)
     if request.method == "POST":
@@ -31,6 +33,7 @@ def teamCreate(request, gongmoPk):
         if teamForm.is_valid():
             teamPost = teamForm.save(commit=False)
             teamPost.gongmo = gongmo
+            teamPost.created_by = request.user
             teamPost.save()
             return redirect("gongmoDetail", gongmoPk=gongmo.pk)
         else:
@@ -46,14 +49,24 @@ def gongmoDetail(request, gongmoPk):
     context = {"gongmo": gongmo, "teams":teams}
     return render(request, "ddingapp/gongmoDetail.html", context)
 
+@login_required
 def teamDetail(request, gongmoPk, teamPk):
     team = get_object_or_404(Team, pk=teamPk)
     jickgoons = team.jickgoons.all()
+
+    try:
+        member = team.member_set.get(user=request.user)
+        member_jickgoon = member.jickgoon.name
+    except Member.DoesNotExist:
+        member_jickgoon = None
+
     context = {
-        'team' : team,
-        'jickgoons' : jickgoons,
+        'team': team,
+        'jickgoons': jickgoons,
+        'member_jickgoon': member_jickgoon,
     }
     return render(request, 'ddingapp/teamDetail.html', context)
+
 
 def gongmoDelete(request, gongmoPk):
     gongmoPost = get_object_or_404(Gongmo, pk=gongmoPk)
@@ -65,14 +78,19 @@ def teamDelete(request, gongmoPk, teamPk):
     teamPost.delete()
     return redirect("gongmoDetail", gongmoPk=gongmoPk)
 
+@login_required
 def teamJoin(request, gongmoPk, teamPk):
     team = get_object_or_404(Team, pk=teamPk)
     jickgoons = Jickgoon.objects.filter(name__in=['기획', '개발', '디자인'])
     if request.method == 'POST':
         form = MemberForm(request.POST)
         if form.is_valid():
+            jickgoon_id = request.POST.get('jickgoon')
+            jickgoon = get_object_or_404(Jickgoon, id=jickgoon_id)
             member = form.save(commit=False)
             member.team = team
+            member.user = request.user
+            member.jickgoon = jickgoon
             member.save()
             return redirect('teamDetail', gongmoPk=gongmoPk, teamPk=teamPk)
     else:

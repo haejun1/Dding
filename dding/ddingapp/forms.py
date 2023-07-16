@@ -19,4 +19,4 @@ class JickgoonForm(forms.ModelForm):
 class MemberForm(forms.ModelForm):
     class Meta:
         model = Member
-        fields = ['user', 'team', 'jickgoon']
+        fields = ['jickgoon']

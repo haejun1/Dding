@@ -13,7 +13,7 @@ class Team(models.Model):
     name = models.CharField(max_length=50)
     gongmo = models.ForeignKey(Gongmo, on_delete=models.CASCADE)
     jickgoons = models.ManyToManyField(Jickgoon, through="Member")
-
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
 
 class Member(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

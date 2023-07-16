@@ -1,10 +1,18 @@
-{%extends 'base.html'%}
-{%block body%}
-<h1>제목 : {{team.name}}</h1>
+{% extends 'base.html' %}
+{% block body %}
+<h1>팀 이름: {{ team.name }}</h1>
+<p>팀 만든 사람: {{ team.created_by.username }}</p>
+
+{% if member_jickgoon %}
+<p>팀 참가 직군: {{ member_jickgoon }}</p>
+{% else %}
+<p>팀 참가 직군: 선택한 직군이 없습니다.</p>
+{% endif %}
+
 <br>
-<a href="/{{team.gongmo.pk}}/{{team.pk}}/teamJoin">팀 참가하기</a>
+<a href="/{{ team.gongmo.pk }}/{{ team.pk }}/teamJoin">팀 참가하기</a>
 <br>
 
-<a href="/{{team.gongmo.pk}}/{{team.pk}}/teamDelete" onclick="return confirm('정말 팀을 삭제하시겠습니까?')">삭제하기</a>
-<a href="/{{team.gongmo.pk}}">{{ team.gongmo.title }}로 돌아가기</a>
-{%endblock%}
+<a href="/{{ team.gongmo.pk }}/{{ team.pk }}/teamDelete" onclick="return confirm('정말 팀을 삭제하시겠습니까?')">삭제하기</a>
+<a href="/{{ team.gongmo.pk }}">{{ team.gongmo.title }}로 돌아가기</a>
+{% endblock %}
