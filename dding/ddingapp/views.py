@@ -53,11 +53,11 @@ def gongmoDetail(request, gongmoPk):
 def teamDetail(request, gongmoPk, teamPk):
     team = get_object_or_404(Team, pk=teamPk)
     jickgoons = team.jickgoons.all()
-
-    try:
-        member = team.member_set.get(user=request.user)
+    
+    member = team.member_set.filter(user=request.user).first()
+    if member:
         member_jickgoon = member.jickgoon.name
-    except Member.DoesNotExist:
+    else:
         member_jickgoon = None
 
     context = {
@@ -82,22 +82,17 @@ def teamDelete(request, gongmoPk, teamPk):
 def teamJoin(request, gongmoPk, teamPk):
     team = get_object_or_404(Team, pk=teamPk)
     jickgoons = Jickgoon.objects.filter(name__in=['기획', '개발', '디자인'])
+    
     if request.method == 'POST':
-        form = MemberForm(request.POST)
-        if form.is_valid():
-            jickgoon_id = request.POST.get('jickgoon')
-            jickgoon = get_object_or_404(Jickgoon, id=jickgoon_id)
-            member = form.save(commit=False)
-            member.team = team
-            member.user = request.user
-            member.jickgoon = jickgoon
-            member.save()
-            return redirect('teamDetail', gongmoPk=gongmoPk, teamPk=teamPk)
-    else:
-        form = MemberForm()
+        selected_jickgoons_ids = request.POST.getlist('jickgoons')
+        selected_jickgoons = Jickgoon.objects.filter(id__in=selected_jickgoons_ids)
+        for jickgoon in selected_jickgoons:
+            Member.objects.create(user=request.user, team=team, jickgoon=jickgoon)
+        return redirect('teamDetail', gongmoPk=gongmoPk, teamPk=teamPk)
+    
     context = {
-        'form' : form,
-        'team' : team,
+        'team': team,
         'jickgoons': jickgoons,
     }
     return render(request, 'ddingapp/teamJoin.html', context)
+

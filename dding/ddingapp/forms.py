@@ -15,8 +15,3 @@ class JickgoonForm(forms.ModelForm):
     class Meta:
         model = Jickgoon
         fields = ['name']
-
-class MemberForm(forms.ModelForm):
-    class Meta:
-        model = Member
-        fields = ['jickgoon']

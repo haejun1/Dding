@@ -6,7 +6,7 @@
 <a href="/{{gongmo.pk}}/teamCreate/">팀 추가하러 가기</a>
 
 {% for team in gongmo.team_set.all %}
-<h2><a href="/{{gongmo.pk}}/{{team.pk}}">{{team.name}}</a></h2>
+<h2><a href="/{{gongmo.pk}}/{{team.pk}}">팀 : {{team.name}}</a></h2>
 {% endfor %}
 <br>
 <a href="/{{gongmo.pk}}/gongmoDelete/" onclick="return confirm('정말 공모전을 삭제하시겠습니까?')">삭제하기</a>

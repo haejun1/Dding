@@ -1,15 +1,16 @@
-{%extends 'base.html'%}
-{%block body%}
+{% extends 'base.html' %}
+{% block body %}
 <h1>{{ team.name }}</h1>
 <form method="post">
   {% csrf_token %}
-  <label for="id_jickgoon">직군 선택하기 :</label>
-  <select name="jickgoon" id="id_jickgoon">
-    {% for jickgoon in jickgoons %}
-    <option value="{{ jickgoon.id }}">{{ jickgoon.name }}</option>
-    {% endfor %}
-  </select>
+  <label for="id_jickgoons">직군 선택하기:</label>
+  <br>
+  {% for jickgoon in jickgoons %}
+  <input type="checkbox" name="jickgoons" value="{{ jickgoon.id }}" id="jickgoon_{{ jickgoon.id }}">
+  <label for="jickgoon_{{ jickgoon.id }}">{{ jickgoon.name }}</label>
+  <br>
+  {% endfor %}
   <button type="submit">팀 참가하기</button>
 </form>
-<a href="/{{team.gongmo.pk}}/{{team.pk}}">팀으로 이동하기</a>
-{%endblock%}
+<a href="/{{ team.gongmo.pk }}/{{ team.pk }}">팀으로 이동하기</a>
+{% endblock %}

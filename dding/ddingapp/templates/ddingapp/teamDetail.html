@@ -3,16 +3,25 @@
 <h1>팀 이름: {{ team.name }}</h1>
 <p>팀 만든 사람: {{ team.created_by.username }}</p>
 
-{% if member_jickgoon %}
-<p>팀 참가 직군: {{ member_jickgoon }}</p>
-{% else %}
-<p>팀 참가 직군: 선택한 직군이 없습니다.</p>
+<br>
+
+{% if team.member_set.all %}
+<h2>팀 멤버들의 직군:</h2>
+<ul>
+  {% for member in team.member_set.all %}
+  <li>{{ member.user.username }}: {{ member.jickgoon.name }}</li>
+  {% endfor %}
+</ul>
 {% endif %}
 
 <br>
+
 <a href="/{{ team.gongmo.pk }}/{{ team.pk }}/teamJoin">팀 참가하기</a>
 <br>
 
+{% if user.is_authenticated and user == team.created_by %}
 <a href="/{{ team.gongmo.pk }}/{{ team.pk }}/teamDelete" onclick="return confirm('정말 팀을 삭제하시겠습니까?')">삭제하기</a>
+{% endif %}
+
 <a href="/{{ team.gongmo.pk }}">{{ team.gongmo.title }}로 돌아가기</a>
 {% endblock %}
