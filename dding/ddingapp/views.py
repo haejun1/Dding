@@ -96,3 +96,8 @@ def teamJoin(request, gongmoPk, teamPk):
     }
     return render(request, 'ddingapp/teamJoin.html', context)
 
+@login_required
+def mypage(request):
+    user_id = request.user.username
+    context = {'user_id':user_id,}
+    return render(request, 'ddingapp/mypage.html', context)
