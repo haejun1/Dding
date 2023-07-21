@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.models import User
 from .models import *
 from .forms import *
 from django.contrib import messages
@@ -97,7 +98,19 @@ def teamJoin(request, gongmoPk, teamPk):
     return render(request, 'ddingapp/teamJoin.html', context)
 
 @login_required
-def mypage(request):
-    user_id = request.user.username
-    context = {'user_id':user_id,}
+def mypage(request, user_id):
+    user = get_object_or_404(User, pk=user_id)
+    bookmarks = Bookmark.objects.filter(user=user)
+    context = {'user': user, 'bookmarks': bookmarks}
     return render(request, 'ddingapp/mypage.html', context)
+
+@login_required
+def bookmark(request, teamPk):
+    team = get_object_or_404(Team, pk=teamPk)
+    user = request.user
+    bookmark, created = Bookmark.objects.get_or_create(user=user, team=team)
+
+    if not created:
+        bookmark.delete()
+
+    return redirect('teamDetail', gongmoPk=team.gongmo.pk, teamPk=teamPk)

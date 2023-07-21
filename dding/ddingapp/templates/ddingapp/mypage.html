@@ -1,5 +1,10 @@
 {% extends 'base.html' %}
 {% block body %}
-<h1>{{ user_id }}의 마이페이지</h1>
-
+<h1>{{ user }}의 마이페이지</h1>
+<h2>북마크 목록</h2>
+<ul>
+  {% for bookmark in bookmarks %}
+  <li><a href="/{{ bookmark.team.gongmo.pk }}/{{ bookmark.team.pk }}">{{ bookmark.team.name }}</a></li>
+  {% endfor %}
+</ul>
 {% endblock %}
