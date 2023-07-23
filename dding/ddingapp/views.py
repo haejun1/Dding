@@ -55,6 +55,7 @@ def gongmoDetail(request, gongmoPk):
 def teamDetail(request, gongmoPk, teamPk):
     team = get_object_or_404(Team, pk=teamPk)
     jickgoons = team.jickgoons.all()
+    bookmarks = team.bookmark_set.all()
     
     member = team.member_set.filter(user=request.user).first()
     if member:
@@ -66,6 +67,7 @@ def teamDetail(request, gongmoPk, teamPk):
         'team': team,
         'jickgoons': jickgoons,
         'member_jickgoon': member_jickgoon,
+        'bookmarks' : bookmarks,
     }
     return render(request, 'ddingapp/teamDetail.html', context)
 

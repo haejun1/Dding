@@ -34,6 +34,15 @@
 
 <br>
 
+<h2>이 팀을 북마크한 사용자 목록</h2>
+<ul>
+  {% for bookmark in bookmarks %}
+  <li>{{ bookmark.user.username }}</li>
+  {% endfor %}
+</ul>
+
+<br>
+
 {% if user.is_authenticated and user == team.created_by %}
 <a href="/{{ team.gongmo.pk }}/{{ team.pk }}/teamDelete" onclick="return confirm('정말 팀을 삭제하시겠습니까?')">삭제하기</a>
 {% endif %}
