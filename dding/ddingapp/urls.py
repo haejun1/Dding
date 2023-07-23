@@ -12,4 +12,5 @@ urlpatterns = [
     path('<int:gongmoPk>/<int:teamPk>/teamJoin/', views.teamJoin, name='teamJoin'),
     path('mypage/<int:user_id>/', views.mypage, name='mypage'),
     path('<int:teamPk>/bookmark/', views.bookmark, name='bookmark'),
+    path('<int:teamPk>/leaveTeam/', views.leaveTeam, name='leaveTeam'),
 ]

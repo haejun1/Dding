@@ -4,6 +4,7 @@ from .models import *
 from .forms import *
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.urls import reverse
 
 
 # Create your views here.
@@ -85,10 +86,17 @@ def teamJoin(request, gongmoPk, teamPk):
     jickgoons = Jickgoon.objects.filter(name__in=['기획', '개발', '디자인'])
     
     if request.method == 'POST':
+        # 사용자가 선택한 직군들의 ID 리스트
         selected_jickgoons_ids = request.POST.getlist('jickgoons')
-        selected_jickgoons = Jickgoon.objects.filter(id__in=selected_jickgoons_ids)
-        for jickgoon in selected_jickgoons:
+        
+        # 기존에 팀에 참가한 사용자의 직군들을 모두 지우기
+        team.member_set.filter(user=request.user).delete()
+        
+        # 새로 선택한 직군들을 팀에 추가
+        for jickgoon_id in selected_jickgoons_ids:
+            jickgoon = get_object_or_404(Jickgoon, id=jickgoon_id)
             Member.objects.create(user=request.user, team=team, jickgoon=jickgoon)
+        
         return redirect('teamDetail', gongmoPk=gongmoPk, teamPk=teamPk)
     
     context = {
@@ -101,7 +109,8 @@ def teamJoin(request, gongmoPk, teamPk):
 def mypage(request, user_id):
     user = get_object_or_404(User, pk=user_id)
     bookmarks = Bookmark.objects.filter(user=user)
-    context = {'user': user, 'bookmarks': bookmarks}
+    teams = Team.objects.filter(member__user=user)
+    context = {'user': user, 'bookmarks': bookmarks, 'teams':teams,}
     return render(request, 'ddingapp/mypage.html', context)
 
 @login_required
@@ -114,3 +123,13 @@ def bookmark(request, teamPk):
         bookmark.delete()
 
     return redirect('teamDetail', gongmoPk=team.gongmo.pk, teamPk=teamPk)
+
+@login_required
+def leaveTeam(request, teamPk):
+    team = get_object_or_404(Team, pk=teamPk)
+    try:
+        member = Member.objects.get(user=request.user, team=team)
+        member.delete()
+    except Member.DoesNotExist:
+        pass 
+    return redirect(reverse('mypage', args=[request.user.id]))

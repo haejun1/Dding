@@ -6,7 +6,7 @@
   <label for="id_jickgoons">직군 선택하기:</label>
   <br>
   {% for jickgoon in jickgoons %}
-  <input type="checkbox" name="jickgoons" value="{{ jickgoon.id }}" id="jickgoon_{{ jickgoon.id }}">
+  <input type="radio" name="jickgoons" value="{{ jickgoon.id }}" id="jickgoon_{{ jickgoon.id }}">
   <label for="jickgoon_{{ jickgoon.id }}">{{ jickgoon.name }}</label>
   <br>
   {% endfor %}

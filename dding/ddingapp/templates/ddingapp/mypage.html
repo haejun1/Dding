@@ -7,4 +7,14 @@
   <li><a href="/{{ bookmark.team.gongmo.pk }}/{{ bookmark.team.pk }}">{{ bookmark.team.name }}</a></li>
   {% endfor %}
 </ul>
+<br>
+<h2>참여 중인 팀 목록</h2>
+<ul>
+  {% for team in teams %}
+  <li>
+    <a href="/{{ team.gongmo.pk }}/{{ team.pk }}/">{{ team.name }}</a>
+    <a href="/{{ team.pk }}/leaveTeam/">팀 나가기</a>
+  </li>
+  {% endfor %}
+</ul>
 {% endblock %}
