@@ -5,6 +5,8 @@ from .forms import *
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
+from django.utils.html import escape
+from django.utils import timezone
 
 
 # Create your views here.
@@ -88,17 +90,16 @@ def teamJoin(request, gongmoPk, teamPk):
     jickgoons = Jickgoon.objects.filter(name__in=['기획', '개발', '디자인'])
     
     if request.method == 'POST':
-        # 사용자가 선택한 직군들의 ID 리스트
         selected_jickgoons_ids = request.POST.getlist('jickgoons')
-        
-        # 기존에 팀에 참가한 사용자의 직군들을 모두 지우기
         team.member_set.filter(user=request.user).delete()
         
-        # 새로 선택한 직군들을 팀에 추가
         for jickgoon_id in selected_jickgoons_ids:
             jickgoon = get_object_or_404(Jickgoon, id=jickgoon_id)
             Member.objects.create(user=request.user, team=team, jickgoon=jickgoon)
         
+        notification_message = f"{escape(request.user.username)} 님이 {escape(team.name)} 팀에 {escape(jickgoon.name)} 직군으로 참여하였습니다. ({timezone.now()})"
+        notification = Notification.objects.create(user=request.user, team=team, jickgoon=jickgoon, message=notification_message)
+
         return redirect('teamDetail', gongmoPk=gongmoPk, teamPk=teamPk)
     
     context = {
@@ -112,7 +113,15 @@ def mypage(request, user_id):
     user = get_object_or_404(User, pk=user_id)
     bookmarks = Bookmark.objects.filter(user=user)
     teams = Team.objects.filter(member__user=user)
-    context = {'user': user, 'bookmarks': bookmarks, 'teams':teams,}
+    teamsteams = Team.objects.filter(created_by=user)
+    notifications = Notification.objects.filter(team__created_by=user)
+    context = {
+        'user': user,
+        'bookmarks': bookmarks,
+        'teams':teams,
+        'teamsteams': teamsteams,
+        'notifications': notifications,
+        }
     return render(request, 'ddingapp/mypage.html', context)
 
 @login_required

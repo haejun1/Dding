@@ -1,12 +1,14 @@
 {% extends 'base.html' %}
 {% block body %}
 <h1>{{ user }}의 마이페이지</h1>
+
 <h2>북마크 목록</h2>
 <ul>
   {% for bookmark in bookmarks %}
   <li><a href="/{{ bookmark.team.gongmo.pk }}/{{ bookmark.team.pk }}">{{ bookmark.team.name }}</a></li>
   {% endfor %}
 </ul>
+
 <br>
 <h2>참여 중인 팀 목록</h2>
 <ul>
@@ -15,6 +17,15 @@
     <a href="/{{ team.gongmo.pk }}/{{ team.pk }}/">{{ team.name }}</a>
     <a href="/{{ team.pk }}/leaveTeam/">팀 나가기</a>
   </li>
+  {% endfor %}
+</ul>
+
+<br>
+
+<h2>알림 목록</h2>
+<ul>
+  {% for notification in notifications %}
+  <li>{{ notification.message }}</li>
   {% endfor %}
 </ul>
 {% endblock %}
