@@ -26,6 +26,10 @@
 <ul>
   {% for notification in notifications %}
   <li>{{ notification.message }}</li>
+  <form method="post" action="{% url 'deleteNotification' notification.pk %}">
+    {% csrf_token %}
+    <button type="submit">알림 삭제</button>
+  </form>
   {% endfor %}
 </ul>
 {% endblock %}

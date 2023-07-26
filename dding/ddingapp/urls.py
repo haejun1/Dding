@@ -13,4 +13,5 @@ urlpatterns = [
     path('mypage/<int:user_id>/', views.mypage, name='mypage'),
     path('<int:teamPk>/bookmark/', views.bookmark, name='bookmark'),
     path('<int:teamPk>/leaveTeam/', views.leaveTeam, name='leaveTeam'),
+    path('deleteNotification/<int:notification_pk>/', views.deleteNotification, name='deleteNotification'),
 ]

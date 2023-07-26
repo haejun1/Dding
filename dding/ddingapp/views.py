@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from django.utils.html import escape
 from django.utils import timezone
+from django.http import HttpResponseForbidden
 
 # Create your views here.
 def index(request):
@@ -97,6 +98,8 @@ def teamJoin(request, gongmoPk, teamPk):
         selected_jickgoons_ids = request.POST.getlist('jickgoons')
         team.member_set.filter(user=request.user).delete()
         
+        is_team_creator = team.created_by == request.user
+
         dev_capacity = team.dev_capacity
         plan_capacity = team.plan_capacity
         design_capacity = team.design_capacity
@@ -120,8 +123,9 @@ def teamJoin(request, gongmoPk, teamPk):
             member_counts[jickgoon.name] += 1
         
         
-        notification_message = f"{escape(request.user.username)} 님이 {escape(team.name)} 팀에 {escape(jickgoon.name)} 직군으로 참여하였습니다. ({timezone.now()})"
-        notification = Notification.objects.create(user=request.user, team=team, jickgoon=jickgoon, message=notification_message)
+        if not is_team_creator:
+            notification_message = f"{escape(request.user.username)} 님이 {escape(team.name)} 팀에 {escape(jickgoon.name)} 직군으로 참여하였습니다. ({timezone.now().strftime('%Y-%m-%d %H:%M')})"
+            notification = Notification.objects.create(user=request.user, team=team, jickgoon=jickgoon, message=notification_message)
 
         return redirect('teamDetail', gongmoPk=gongmoPk, teamPk=teamPk)
     
@@ -167,3 +171,13 @@ def leaveTeam(request, teamPk):
     except Member.DoesNotExist:
         pass 
     return redirect(reverse('mypage', args=[request.user.id]))
+
+@login_required
+def deleteNotification(request, notification_pk):
+    notification = get_object_or_404(Notification, pk=notification_pk)
+
+    if request.method == 'POST':
+        notification.delete()
+        return redirect(reverse('mypage', args=[request.user.id]))
+
+    return HttpResponseForbidden()
