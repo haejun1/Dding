@@ -1,8 +1,10 @@
 {% extends 'base.html' %}
 {% block body %}
-<h1>팀 이름: {{ team.name }}</h1>
 <p>팀 만든 사람: {{ team.created_by.username }}</p>
-
+<h1>제목 {{ team.name }}</h1>
+<p>팀명 : {{ team.teamname }}</p>
+<p>연락 수단 : {{ team.call }}</p>
+<p>팀 소개 글 : {{ team.detail }}</p>
 <br>
 
 {% if team.member_set.all %}

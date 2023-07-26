@@ -12,6 +12,9 @@ class Jickgoon(models.Model):
 
 class Team(models.Model):
     name = models.CharField(max_length=50)
+    teamname = models.CharField(max_length=100,null=True)
+    call = models.CharField(max_length=100,null=True)
+    detail = models.TextField(null=True)
     gongmo = models.ForeignKey(Gongmo, on_delete=models.CASCADE)
     jickgoons = models.ManyToManyField(Jickgoon, through="Member")
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
