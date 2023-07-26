@@ -8,7 +8,6 @@ from django.urls import reverse
 from django.utils.html import escape
 from django.utils import timezone
 
-
 # Create your views here.
 def index(request):
     gongmos = Gongmo.objects.all()
@@ -39,6 +38,7 @@ def teamCreate(request, gongmoPk):
             teamPost.gongmo = gongmo
             teamPost.created_by = request.user
             teamPost.save()
+            teamForm.save_m2m()
             return redirect("gongmoDetail", gongmoPk=gongmo.pk)
         else:
             messages.error(request, "폼이 유효하지 않습니다")
@@ -65,11 +65,15 @@ def teamDetail(request, gongmoPk, teamPk):
     else:
         member_jickgoon = None
 
+
     context = {
         'team': team,
         'jickgoons': jickgoons,
         'member_jickgoon': member_jickgoon,
         'bookmarks' : bookmarks,
+        'dev_capacity': team.get_dev_capacity(),
+        'plan_capacity': team.get_plan_capacity(),
+        'design_capacity': team.get_design_capacity(),
     }
     return render(request, 'ddingapp/teamDetail.html', context)
 
@@ -93,9 +97,28 @@ def teamJoin(request, gongmoPk, teamPk):
         selected_jickgoons_ids = request.POST.getlist('jickgoons')
         team.member_set.filter(user=request.user).delete()
         
+        dev_capacity = team.dev_capacity
+        plan_capacity = team.plan_capacity
+        design_capacity = team.design_capacity
+
+        member_counts = {
+            '개발': team.member_set.filter(jickgoon__name='개발').count(),
+            '기획': team.member_set.filter(jickgoon__name='기획').count(),
+            '디자인': team.member_set.filter(jickgoon__name='디자인').count(),
+        }       
+
         for jickgoon_id in selected_jickgoons_ids:
             jickgoon = get_object_or_404(Jickgoon, id=jickgoon_id)
+
+            if (jickgoon.name == '개발' and member_counts['개발'] >= dev_capacity) or \
+               (jickgoon.name == '기획' and member_counts['기획'] >= plan_capacity) or \
+               (jickgoon.name == '디자인' and member_counts['디자인'] >= design_capacity):
+                messages.error(request, f"{jickgoon.name} 직군의 참가 인원 수가 이미 초과되었습니다.")
+                return redirect('teamDetail', gongmoPk=gongmoPk, teamPk=teamPk)
+
             Member.objects.create(user=request.user, team=team, jickgoon=jickgoon)
+            member_counts[jickgoon.name] += 1
+        
         
         notification_message = f"{escape(request.user.username)} 님이 {escape(team.name)} 팀에 {escape(jickgoon.name)} 직군으로 참여하였습니다. ({timezone.now()})"
         notification = Notification.objects.create(user=request.user, team=team, jickgoon=jickgoon, message=notification_message)
